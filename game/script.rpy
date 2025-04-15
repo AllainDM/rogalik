@@ -5,8 +5,8 @@ init python:
     import math    # Для математических операций (хотя в текущем коде не используется)
 
     # Конфигурация игры
-    MAP_WIDTH = 30   # Ширина игрового поля в клетках
-    MAP_HEIGHT = 15  # Высота игрового поля в клетках
+    MAP_WIDTH = 32   # Ширина игрового поля в клетках
+    MAP_HEIGHT = 17  # Высота игрового поля в клетках
     CELL_SIZE = 60   # Размер одной клетки в пикселях
     MOVE_INTERVAL = 0.5  # Интервал между движениями игрока/врагов в секундах
 
@@ -16,6 +16,10 @@ init python:
     CELL_PLAYER = 2  # Игрок
     CELL_COIN = 3    # Монета (цель для сбора)
     CELL_ENEMY = 4   # Враг (опасность)
+
+    # Стартовые параметры
+    START_NUM_COINS = 20
+    START_NUM_ENEMY = 5
 
     # Функция инициализации игрового состояния
     def init_game():
@@ -36,7 +40,7 @@ init python:
 
         # Генерируем монеты (10 штук в случайных местах)
         coins = []
-        for _ in range(30):
+        for _ in range(START_NUM_COINS):
             # Генерируем случайные координаты
             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
             # Убеждаемся, что клетка пуста
@@ -48,7 +52,7 @@ init python:
 
         # Генерируем врагов (3 штуки в случайных местах)
         enemies = []
-        for _ in range(5):
+        for _ in range(START_NUM_ENEMY):
             # Генерируем случайные координаты
             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
             # Убеждаемся, что клетка пуста
@@ -222,8 +226,8 @@ init python:
             enemy[0], enemy[1] = nx, ny  # Обновляем координаты врага
 
             # Если враг наступил на монету - удаляем монету
-#             if (nx, ny) in game_state["coins"]:
-#                 game_state["coins"].remove((nx, ny))
+            if (nx, ny) in game_state["coins"]:
+                game_state["coins"].remove((nx, ny))
 
             # Занимаем новую клетку
             game_state["map"][ny][nx] = CELL_ENEMY
