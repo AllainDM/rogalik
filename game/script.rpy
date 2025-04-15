@@ -5,9 +5,9 @@ init python:
     import math    # Для математических операций (хотя в текущем коде не используется)
 
     # Конфигурация игры
-    MAP_WIDTH = 35   # Ширина игрового поля в клетках
-    MAP_HEIGHT = 20  # Высота игрового поля в клетках
-    CELL_SIZE = 50   # Размер одной клетки в пикселях
+    MAP_WIDTH = 30   # Ширина игрового поля в клетках
+    MAP_HEIGHT = 15  # Высота игрового поля в клетках
+    CELL_SIZE = 60   # Размер одной клетки в пикселях
     MOVE_INTERVAL = 0.5  # Интервал между движениями игрока/врагов в секундах
 
     # Типы клеток на карте (используются для отрисовки и логики игры)
@@ -36,7 +36,7 @@ init python:
 
         # Генерируем монеты (10 штук в случайных местах)
         coins = []
-        for _ in range(10):
+        for _ in range(30):
             # Генерируем случайные координаты
             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
             # Убеждаемся, что клетка пуста
@@ -48,7 +48,7 @@ init python:
 
         # Генерируем врагов (3 штуки в случайных местах)
         enemies = []
-        for _ in range(3):
+        for _ in range(5):
             # Генерируем случайные координаты
             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
             # Убеждаемся, что клетка пуста
@@ -222,8 +222,8 @@ init python:
             enemy[0], enemy[1] = nx, ny  # Обновляем координаты врага
 
             # Если враг наступил на монету - удаляем монету
-            if (nx, ny) in game_state["coins"]:
-                game_state["coins"].remove((nx, ny))
+#             if (nx, ny) in game_state["coins"]:
+#                 game_state["coins"].remove((nx, ny))
 
             # Занимаем новую клетку
             game_state["map"][ny][nx] = CELL_ENEMY
@@ -270,13 +270,13 @@ screen game_screen():
                     if cell == CELL_EMPTY:
                         text " "  # Пустая клетка
                     elif cell == CELL_WALL:
-                        text "#" color "#888"  # Стена (серый символ #)
+                        add "wall.jpg"
                     elif cell == CELL_PLAYER:
-                        text "@" color "#0f0"  # Игрок (зеленый символ @)
+                        add "0_Minotaur_Running_000_100.png"
                     elif cell == CELL_COIN:
-                        text "$" color "#ff0"  # Монета (желтый символ $)
+                        add "23.png"
                     elif cell == CELL_ENEMY:
-                        text "E" color "#f00"  # Враг (красный символ E)
+                        add "0_Skeleton_Warrior_Running_000_free.png" fit "contain"
 
     # Вертикальный контейнер для интерфейса
     vbox:
