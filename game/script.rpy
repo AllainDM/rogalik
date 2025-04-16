@@ -5,8 +5,10 @@ init python:
     import math    # Для математических операций (хотя в текущем коде не используется)
 
     # Конфигурация игры
-    MAP_WIDTH = 32   # Ширина игрового поля в клетках
-    MAP_HEIGHT = 17  # Высота игрового поля в клетках
+    MAP_WIDTH = 10   # Ширина игрового поля в клетках
+#     MAP_WIDTH = 32   # Ширина игрового поля в клетках
+    MAP_HEIGHT = 15  # Высота игрового поля в клетках
+#     MAP_HEIGHT = 17  # Высота игрового поля в клетках
     CELL_SIZE = 60   # Размер одной клетки в пикселях
     MOVE_INTERVAL = 0.5  # Интервал между движениями игрока/врагов в секундах
 
@@ -17,14 +19,20 @@ init python:
     CELL_COIN = 3    # Монета (цель для сбора)
     CELL_ENEMY = 4   # Враг (опасность)
 
+    CELL_PLAYER_TARGET = 5  # Конечная точка маршрута игрока, выводится специальный спрайт
+
     # Стартовые параметры
-    START_NUM_COINS = 20
-    START_NUM_ENEMY = 5
+    START_NUM_COINS = 1
+    START_NUM_ENEMY = 0
 
     # Функция инициализации игрового состояния
     def init_game():
         # Создаем пустую карту (двумерный список)
         game_map = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
+
+        # Создаем пустую карту (двумерный список) для отрисовки пути поверх обычной карты
+        game_map_path = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
+        print(game_map_path)
 
         # Создаем границы карты (стены по краям)
         for x in range(MAP_WIDTH):
@@ -65,6 +73,7 @@ init python:
         # Возвращаем начальное состояние игры в виде словаря
         return {
             "map": game_map,          # Двумерный массив карты
+            "map_path": game_map_path, # Двумерный массив карты для отобажения пути игрока
             "player_pos": player_pos, # Позиция игрока [x, y]
             "coins": coins,          # Список позиций монет [(x1,y1), ...]
             "enemies": enemies,       # Список врагов [[x,y, (dx,dy)], ...]
@@ -140,6 +149,13 @@ init python:
 
         # Устанавливаем новую цель для движения
         game_state["target_pos"] = (tx, ty)
+        game_state["map_path"][ty][tx] = CELL_PLAYER_TARGET
+        # TODO необходимо очистить старую точку маршрута
+        print(f"Конечная точка пути игрока. {game_state['map_path'][tx][ty]}")
+        print(ty, tx)
+        print(game_state["map_path"])
+        print(game_state["map"])
+
         # Находим путь до цели
         game_state["path"] = find_path((px, py), (tx, ty), game_state)
 
@@ -265,11 +281,13 @@ screen game_screen():
         for y in range(MAP_HEIGHT):
             for x in range(MAP_WIDTH):
                 $ cell = game_state["map"][y][x]  # Получаем тип клетки
+                $ cell_path = game_state["map_path"][y][x]  # Получаем тип клетки для вывода пути
                 button:
                     xsize CELL_SIZE  # Ширина кнопки = размеру клетки
                     ysize CELL_SIZE  # Высота кнопки = размеру клетки
                     # При клике вызываем обработчик с координатами
                     action Function(handle_click, (x * CELL_SIZE + CELL_SIZE/2, y * CELL_SIZE + CELL_SIZE/2))
+
                     # Отрисовываем содержимое клетки в зависимости от типа
                     if cell == CELL_EMPTY:
                         text " "  # Пустая клетка
@@ -281,6 +299,9 @@ screen game_screen():
                         add "23.png"
                     elif cell == CELL_ENEMY:
                         add "0_Skeleton_Warrior_Running_000_free.png" fit "contain"
+
+                    if cell_path == CELL_PLAYER_TARGET:
+                        add "wall.jpg"
 
     # Вертикальный контейнер для интерфейса
     vbox:
