@@ -5,10 +5,10 @@ init python:
     import math    # Для математических операций (хотя в текущем коде не используется)
 
     # Конфигурация игры
-    MAP_WIDTH = 10   # Ширина игрового поля в клетках
-#     MAP_WIDTH = 32   # Ширина игрового поля в клетках
-    MAP_HEIGHT = 15  # Высота игрового поля в клетках
-#     MAP_HEIGHT = 17  # Высота игрового поля в клетках
+#     MAP_WIDTH = 10   # Ширина игрового поля в клетках
+    MAP_WIDTH = 32   # Ширина игрового поля в клетках
+#     MAP_HEIGHT = 15  # Высота игрового поля в клетках
+    MAP_HEIGHT = 17  # Высота игрового поля в клетках
     CELL_SIZE = 60   # Размер одной клетки в пикселях
     MOVE_INTERVAL = 0.5  # Интервал между движениями игрока/врагов в секундах
 
@@ -22,8 +22,8 @@ init python:
     CELL_PLAYER_TARGET = 5  # Конечная точка маршрута игрока, выводится специальный спрайт
 
     # Стартовые параметры
-    START_NUM_COINS = 1
-    START_NUM_ENEMY = 0
+    START_NUM_COINS = 30
+    START_NUM_ENEMY = 3
 
     # Функция инициализации игрового состояния
     def init_game():
@@ -32,7 +32,6 @@ init python:
 
         # Создаем пустую карту (двумерный список) для отрисовки пути поверх обычной карты
         game_map_path = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
-        print(game_map_path)
 
         # Создаем границы карты (стены по краям)
         for x in range(MAP_WIDTH):
@@ -147,14 +146,19 @@ init python:
             game_state["message"] = "Нельзя идти в стену!"
             return
 
-        # Устанавливаем новую цель для движения
+        # Сначала очистим старую точку в карте маршрута
+        game_state["map_path"][ty][tx] = CELL_EMPTY
+        print(game_state["target_pos"])
+
+        # Теперь устанавливаем новую цель для движения
         game_state["target_pos"] = (tx, ty)
         game_state["map_path"][ty][tx] = CELL_PLAYER_TARGET
-        # TODO необходимо очистить старую точку маршрута
-        print(f"Конечная точка пути игрока. {game_state['map_path'][tx][ty]}")
-        print(ty, tx)
-        print(game_state["map_path"])
-        print(game_state["map"])
+        print(game_state["target_pos"])
+
+#         print(f"Конечная точка пути игрока. {game_state['map_path'][tx][ty]}")
+#         print(ty, tx)
+#         print(game_state["map_path"])
+#         print(game_state["map"])
 
         # Находим путь до цели
         game_state["path"] = find_path((px, py), (tx, ty), game_state)
@@ -165,6 +169,49 @@ init python:
             game_state["target_pos"] = None  # Сбрасываем цель
         else:
             game_state["message"] = f"Иду к ({tx}, {ty})"
+
+    # Обработчик нажатий клавиш
+    def handle_key(key):
+        # Если игра окончена, любая клавиша перезапускает игру
+        if game_state["game_over"]:
+            restart_game()
+            return
+
+        px, py = game_state["player_pos"]  # Текущая позиция игрока
+        dx, dy = 0, 0  # Направление движения
+
+        # Определяем направление по нажатой клавише
+        if key in ('K_UP', 'w'):    # Стрелка вверх или W
+            dy = -1
+        elif key in ('K_DOWN', 's'): # Стрелка вниз или S
+            dy = 1
+        elif key in ('K_LEFT', 'a'): # Стрелка влево или A
+            dx = -1
+        elif key in ('K_RIGHT', 'd'): # Стрелка вправо или D
+            dx = 1
+        else:
+            return  # Игнорируем другие клавиши
+
+        # Вычисляем новую позицию
+        tx, ty = px + dx, py + dy
+
+        # Проверяем, можно ли переместиться в выбранную клетку
+        if not can_move(tx, ty, game_state):
+            game_state["message"] = "Нельзя идти в стену!"
+            return
+
+        # Очищаем старую цель и путь
+        if game_state["target_pos"]:
+            old_tx, old_ty = game_state["target_pos"]
+            game_state["map_path"][old_ty][old_tx] = CELL_EMPTY
+        game_state["path"] = []
+
+        # Устанавливаем новую цель - следующую клетку в направлении движения
+        game_state["target_pos"] = (tx, ty)
+        game_state["map_path"][ty][tx] = CELL_PLAYER_TARGET
+        game_state["path"] = [(tx, ty)]  # Путь состоит только из одной клетки
+        game_state["message"] = f"Иду к ({tx}, {ty})"
+
 
     # Функция движения игрока по найденному пути
     def move_player(game_state):
@@ -274,8 +321,39 @@ init python:
         game_state = init_game()  # Инициализируем новое состояние
         renpy.restart_interaction()  # Обновляем экран
 
+
 # Экран игры (интерфейс)
 screen game_screen():
+    # Обработчики нажатия клавиш
+    key "K_UP" action Function(handle_key, "K_UP")  # Стрелка вверх
+    key "K_DOWN" action Function(handle_key, "K_DOWN")  # Стрелка вниз
+    key "K_LEFT" action Function(handle_key, "K_LEFT")  # Стрелка влево
+    key "K_RIGHT" action Function(handle_key, "K_RIGHT")  # Стрелка вправо
+    key "w" action Function(handle_key, "w")  # Клавиша W
+    key "a" action Function(handle_key, "a")  # Клавиша A
+    key "s" action Function(handle_key, "s")  # Клавиша S
+    key "d" action Function(handle_key, "d")  # Клавиша D
+#
+#     # Обработчики нажатия клавиш (keydown)
+#     key "K_UP" action Function(handle_key_down, "K_UP")
+#     key "K_DOWN" action Function(handle_key_down, "K_DOWN")
+#     key "K_LEFT" action Function(handle_key_down, "K_LEFT")
+#     key "K_RIGHT" action Function(handle_key_down, "K_RIGHT")
+#     key "w" action Function(handle_key_down, "w")
+#     key "a" action Function(handle_key_down, "a")
+#     key "s" action Function(handle_key_down, "s")
+#     key "d" action Function(handle_key_down, "d")
+#
+#     # Обработчики отпускания клавиш
+#     key "UP up" action Function(handle_key_up, "K_UP")
+#     key "DOWN up" action Function(handle_key_up, "K_DOWN")
+#     key "LEFT up" action Function(handle_key_up, "K_LEFT")
+#     key "RIGHT up" action Function(handle_key_up, "K_RIGHT")
+#     key "w up" action Function(handle_key_up, "w")
+#     key "a up" action Function(handle_key_up, "a")
+#     key "s up" action Function(handle_key_up, "s")
+#     key "d up" action Function(handle_key_up, "d")
+
     # Создаем сетку клеток (игровое поле)
     grid MAP_WIDTH MAP_HEIGHT:
         for y in range(MAP_HEIGHT):
@@ -300,8 +378,8 @@ screen game_screen():
                     elif cell == CELL_ENEMY:
                         add "0_Skeleton_Warrior_Running_000_free.png" fit "contain"
 
-                    if cell_path == CELL_PLAYER_TARGET:
-                        add "wall.jpg"
+#                     if cell_path == CELL_PLAYER_TARGET:
+#                         add "wall.jpg"
 
     # Вертикальный контейнер для интерфейса
     vbox:

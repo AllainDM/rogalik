@@ -3,12 +3,15 @@ game/my_python_api/__pycache__
 .idea
 .venv
 
+# RenPy
+game/cache
+# Сохранения
+game/saves
+
 # Конфиг
 game/my_python_api/config.py
 game/config.py
 
-# Сохранения
-game/saves
 
 # Разработка
 errors.txt
