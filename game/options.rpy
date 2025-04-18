@@ -109,6 +109,7 @@ define config.end_game_transition = None
 
 define config.window = "auto"
 
+# define config.auto_define_screens = True
 
 ## Переходы, используемые при показе и скрытии диалогового окна
 

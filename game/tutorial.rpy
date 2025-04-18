@@ -98,3 +98,9 @@ screen tutorial_screen():
                 text_color "#FFFFFF"
                 text_hover_color "#FFFFFF"
                 padding (25, 10)
+
+            # Добавляем выбор размера карты
+            if renpy.has_screen("map_size_selector"):
+                use map_size_selector
+            else:
+                text "Ошибка загрузки настроек карты" color "#FF0000"

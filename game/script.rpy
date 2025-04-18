@@ -91,8 +91,9 @@ init python:
     import math    # Для математических операций
 
     # Конфигурация игры
-#     MAP_WIDTH = 32   # Ширина игрового поля в клетках
-#     MAP_HEIGHT = 17  # Высота игрового поля в клетках
+    # MAP_WIDTH = 32   # Ширина игрового поля в клетках
+    # MAP_HEIGHT = 17  # Высота игрового поля в клетках
+
     MAP_WIDTH = 10   # Ширина игрового поля в клетках
     MAP_HEIGHT = 10  # Высота игрового поля в клетках
     CELL_SIZE = 60   # Размер одной клетки в пикселях
@@ -110,6 +111,31 @@ init python:
     START_NUM_COINS = 1
     START_NUM_ENEMY = 0
     WALL_DENSITY = 0.2  # Плотность стен (0-1), регулирует сколько стен будет сгенерировано
+
+    # Варианты размеров карты и настроек сложности
+    MAP_SIZES = {
+        "small": {
+            "width": 12,
+            "height": 7,
+            "start_enemy": 1,
+            "start_coins": 5
+        },
+        "medium": {
+            "width": 22,
+            "height": 10,
+            "start_enemy": 2,
+            "start_coins": 10
+        },
+        "large": {
+            "width": 32,
+            "height": 15,
+            "start_enemy": 3,
+            "start_coins": 15
+        }
+    }
+    # Устанавливаем размер по умолчанию
+    if not hasattr(persistent, "map_size"):
+        persistent.map_size = "medium"
 
     # Функция для генерации случайных стен на карте
     def generate_random_walls(game_map):
@@ -449,6 +475,12 @@ init python:
         game_state = init_game()  # Инициализируем новое состояние
         renpy.restart_interaction()  # Обновляем экран
 
+    # Функция перезапуска игры
+    def new_game():
+        global game_state
+        game_state = init_game()  # Инициализируем новое состояние
+        renpy.restart_interaction()  # Обновляем экран
+
 
 # Экран игры (интерфейс)
 screen game_screen():
@@ -512,6 +544,14 @@ screen game_screen():
         textbutton "Рестарт":
             action Function(restart_game)  # При клике перезапускаем игру
 
+#     # Кнопка начала новой игры(обучение + выбор размера карты)
+#     frame:
+#         xalign 0.5  # По центру по X
+#         yanchor 1.0  # Привязка к нижнему краю
+#         ypos 0.95     # В самом низу
+#         textbutton "Рестарт":
+#             action Function(restart_game)  # При клике перезапускаем игру
+
     # Таймер для обновления игры (вызывается каждые 0.1 секунды)
     timer 0.1 repeat True action Function(game_update)
 
@@ -527,6 +567,22 @@ screen game_screen():
 
 # Основная сцена игры
 label start:
+    if persistent.map_size not in MAP_SIZES:
+        $ persistent.map_size = "medium"
+
+    $ current_size = MAP_SIZES[persistent.map_size]
+    $ MAP_WIDTH = current_size["width"]
+    $ MAP_HEIGHT = current_size["height"]
+    $ START_NUM_ENEMY = current_size["start_enemy"]
+    $ START_NUM_COINS = current_size["start_coins"]
+
+#     # Устанавливаем размер карты из сохраненного значения
+#     $ MAP_WIDTH = MAP_SIZES[persistent.map_size]["width"]
+#     $ MAP_HEIGHT = MAP_SIZES[persistent.map_size]["height"]
+#
+#     $ START_NUM_ENEMY = START_NUM_ENEMY[persistent.map_size]["start_enemy"]
+#     $ START_NUM_COINS = START_NUM_COINS[persistent.map_size]["start_coins"]
+
     # Показываем экран обучения перед началом игры
     call screen tutorial_screen
 
