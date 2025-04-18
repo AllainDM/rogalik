@@ -21,12 +21,15 @@ screen victory_screen():
                 bold True
                 xalign 0.5
 
-#             # Статистика
-#             text f"Собрано монет: {game_state['total_coins'] - game_state['coins_left']}/{game_state['total_coins']}":
-#                 size 28
-#                 color "#FFFFFF"
-#                 xalign 0.5
-#
+            # Статистика
+            # Вывод количества собранных слитков
+            $ total_coins = MAP_SIZES[persistent.map_size]["start_coins"]
+            text "Собрано слитков: {}/{}".format(game_state['score'], total_coins):
+#             text f"Собрано слитков: {game_state['score']} из ":
+                size 28
+                color "#FFFFFF"
+                xalign 0.5
+
 #             text f"Потрачено ходов: {game_state['moves']}":
 #                 size 28
 #                 color "#FFFFFF"
