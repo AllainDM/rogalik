@@ -1,10 +1,12 @@
 # Экран обучения (появляется перед началом игры)
 screen tutorial_screen():
+    zorder 200
     # Фон для экрана обучения
     frame:
         xfill True
         yfill True
-        background "#333333cc"  # Полупрозрачный темный фон
+        background "#333333"  # Полупрозрачный темный фон
+#         background "#333333cc"  # Полупрозрачный темный фон
 
         # Основной контейнер с содержимым обучения
         vbox:
@@ -92,7 +94,12 @@ screen tutorial_screen():
             # Кнопка для начала игры
             textbutton "Начать игру":
                 xalign 0.5
-                action [Hide("tutorial_screen"), Return()]  # Скрываем экран обучения и продолжаем игру
+                # action [Hide("tutorial_screen"), Return("start_game")]
+                # action [Hide("tutorial_screen"), Return("restart")]
+                # action [Hide("tutorial_screen"), Return()]  # Скрываем экран и возвращаемся
+
+                action Return()
+
                 background "#5555FF"
                 hover_background "#7777FF"
                 text_color "#FFFFFF"

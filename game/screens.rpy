@@ -413,6 +413,17 @@ style main_menu_version:
 ## экран предназначен для использования с одним или несколькими дочерними
 ## элементами, которые трансклюдируются (помещаются) внутрь него.
 
+# init python:
+#     # Отключаем все события прокрутки мышью
+#     config.keymap["viewport_wheelup"] = []
+#     config.keymap["viewport_wheeldown"] = []
+#     config.keymap["viewport_wheelleft"] = []
+#     config.keymap["viewport_wheelright"] = []
+#
+#     # Перезагружаем keymap, чтобы изменения применились
+#     renpy.clear_keymap_cache()
+
+
 screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
 
     style_prefix "game_menu"
@@ -438,9 +449,12 @@ screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
 
                     viewport:
                         yinitial yinitial
-                        scrollbars "vertical"
-                        mousewheel True
-                        draggable True
+                        scrollbars None
+#                         scrollbars "vertical"
+                        mousewheel False
+#                         mousewheel "disable"
+#                         draggable "disable"      # ← На всякий случай отключаем drag
+                        draggable False
                         pagekeys True
 
                         side_yfill True
@@ -456,9 +470,12 @@ screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
                         cols 1
                         yinitial yinitial
 
-                        scrollbars "vertical"
-                        mousewheel True
-                        draggable True
+                        scrollbars None
+#                         scrollbars "vertical"
+                        mousewheel False
+#                         mousewheel "disable"
+#                         draggable "disable"      # ← На всякий случай отключаем drag
+                        draggable False
                         pagekeys True
 
                         side_yfill True

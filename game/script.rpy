@@ -1,90 +1,4 @@
 ﻿# Инициализация Python-блока в RenPy
-# init python:
-#     # Импорт необходимых модулей
-#     import random  # Для генерации случайных чисел
-#     import math    # Для математических операций (хотя в текущем коде не используется)
-#
-#     # Конфигурация игры
-# #     MAP_WIDTH = 10   # Ширина игрового поля в клетках
-#     MAP_WIDTH = 32   # Ширина игрового поля в клетках
-# #     MAP_HEIGHT = 15  # Высота игрового поля в клетках
-#     MAP_HEIGHT = 17  # Высота игрового поля в клетках
-#     CELL_SIZE = 60   # Размер одной клетки в пикселях
-#     MOVE_INTERVAL = 0.5  # Интервал между движениями игрока/врагов в секундах
-#
-#     # Типы клеток на карте (используются для отрисовки и логики игры)
-#     CELL_EMPTY = 0   # Пустая клетка
-#     CELL_WALL = 1    # Стена (непроходимая)
-#     CELL_PLAYER = 2  # Игрок
-#     CELL_COIN = 3    # Монета (цель для сбора)
-#     CELL_ENEMY = 4   # Враг (опасность)
-#
-#     CELL_PLAYER_TARGET = 5  # Конечная точка маршрута игрока, выводится специальный спрайт
-#
-#     # Стартовые параметры
-#     START_NUM_COINS = 30
-#     START_NUM_ENEMY = 3
-#
-#     # Функция инициализации игрового состояния
-#     def init_game():
-#         # Создаем пустую карту (двумерный список)
-#         game_map = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
-#
-#         # Создаем пустую карту (двумерный список) для отрисовки пути поверх обычной карты
-#         game_map_path = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
-#
-#         # Создаем границы карты (стены по краям)
-#         for x in range(MAP_WIDTH):
-#             game_map[0][x] = CELL_WALL  # Верхняя стена
-#             game_map[MAP_HEIGHT-1][x] = CELL_WALL  # Нижняя стена
-#         for y in range(MAP_HEIGHT):
-#             game_map[y][0] = CELL_WALL  # Левая стена
-#             game_map[y][MAP_WIDTH-1] = CELL_WALL  # Правая стена
-#
-#         # Размещаем игрока в центре карты
-#         player_pos = [MAP_WIDTH // 2, MAP_HEIGHT // 2]
-#         game_map[player_pos[1]][player_pos[0]] = CELL_PLAYER
-#
-#         # Генерируем монеты (10 штук в случайных местах)
-#         coins = []
-#         for _ in range(START_NUM_COINS):
-#             # Генерируем случайные координаты
-#             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
-#             # Убеждаемся, что клетка пуста
-#             while game_map[y][x] != CELL_EMPTY:
-#                 x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
-#             # Размещаем монету
-#             game_map[y][x] = CELL_COIN
-#             coins.append((x, y))  # Добавляем в список монет
-#
-#         # Генерируем врагов (3 штуки в случайных местах)
-#         enemies = []
-#         for _ in range(START_NUM_ENEMY):
-#             # Генерируем случайные координаты
-#             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
-#             # Убеждаемся, что клетка пуста
-#             while game_map[y][x] != CELL_EMPTY:
-#                 x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
-#             # Размещаем врага и задаем начальное направление движения
-#             game_map[y][x] = CELL_ENEMY
-#             enemies.append([x, y, random.choice([(0,1), (1,0), (0,-1), (-1,0)])])
-#
-#         # Возвращаем начальное состояние игры в виде словаря
-#         return {
-#             "map": game_map,          # Двумерный массив карты
-#             "map_path": game_map_path, # Двумерный массив карты для отобажения пути игрока
-#             "player_pos": player_pos, # Позиция игрока [x, y]
-#             "coins": coins,          # Список позиций монет [(x1,y1), ...]
-#             "enemies": enemies,       # Список врагов [[x,y, (dx,dy)], ...]
-#             "score": 0,               # Счет игрока
-#             "game_over": False,       # Флаг окончания игры
-#             "message": "Кликните куда идти",  # Сообщение для игрока
-#             "target_pos": None,       # Целевая позиция для движения
-#             "path": [],              # Путь до цели (список клеток)
-#             "last_move_time": 0.0,    # Время последнего движения игрока
-#             "enemy_move_time": 0.0   # Время последнего движения врагов
-#         }
-# Инициализация Python-блока в RenPy
 init python:
     # Импорт необходимых модулей
     import random  # Для генерации случайных чисел
@@ -114,28 +28,15 @@ init python:
 
     # Варианты размеров карты и настроек сложности
     MAP_SIZES = {
-        "small": {
-            "width": 12,
-            "height": 7,
-            "start_enemy": 1,
-            "start_coins": 5
-        },
-        "medium": {
-            "width": 22,
-            "height": 10,
-            "start_enemy": 2,
-            "start_coins": 10
-        },
-        "large": {
-            "width": 32,
-            "height": 15,
-            "start_enemy": 3,
-            "start_coins": 15
-        }
+        "small": { "width": 12, "height": 7, "start_enemy": 1, "start_coins": 5 },
+        "medium": { "width": 22, "height": 10, "start_enemy": 2, "start_coins": 10 },
+        "large": { "width": 32, "height": 15, "start_enemy": 3, "start_coins": 15}
     }
     # Устанавливаем размер по умолчанию
     if not hasattr(persistent, "map_size"):
         persistent.map_size = "medium"
+
+    game_state = None  # Инициализируем переменную как None
 
     # Функция для генерации случайных стен на карте
     def generate_random_walls(game_map):
@@ -210,6 +111,7 @@ init python:
             coins.append((x, y))
 
         # Генерируем врагов (в случайных местах)
+        # TODO Доработать генерацию, чтобы враги не появлялись рядом с игроком
         enemies = []
         for _ in range(START_NUM_ENEMY):
             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
@@ -475,10 +377,42 @@ init python:
 
     # Функция перезапуска игры
     def new_game():
-        global game_state
-        game_state = init_game()  # Инициализируем новое состояние
-        renpy.restart_interaction()  # Обновляем экран
+#         # Остановим игру
+#         game_state["game_over"] = True
+#         # Очищаем текущее состояние игры
+#         global game_state
+#         game_state = None
+#         # Показываем экран обучения
+#         renpy.show_screen("tutorial_screen")
 
+#         global game_state
+#         # Устанавливаем флаг окончания игры
+#         if 'game_state' in globals() and game_state is not None:
+#             game_state["game_over"] = True
+#         # Сбрасываем состояние
+#         game_state = None
+#         # Показываем экран обучения
+#         renpy.show_screen("tutorial_screen")
+#         # Скрываем игровой экран
+#         renpy.hide_screen("game_screen")
+#         # Принудительно обновляем интерфейс
+#         renpy.restart_interaction()
+
+        global game_state
+        # Полностью останавливаем текущую игру
+        if game_state is not None:
+            game_state["game_over"] = True
+
+        # Скрываем все игровые экраны
+        renpy.hide_screen("game_screen")
+        renpy.hide_screen("victory_screen")
+        renpy.hide_screen("lose_screen")
+
+        # Принудительно обновляем интерфейс
+        renpy.restart_interaction()
+
+        # Переходим к началу игры через jump
+        renpy.jump("start")
 
 # Экран игры (интерфейс)
 screen game_screen():
@@ -536,7 +470,7 @@ screen game_screen():
 
     # Кнопка рестарта
     frame:
-        xalign 0.5  # По центру по X
+        xalign 0.6  # По центру по X
         yanchor 1.0  # Привязка к нижнему краю
         ypos 0.95     # В самом низу
         textbutton "Рестарт":
@@ -544,7 +478,7 @@ screen game_screen():
 
     # Кнопка начала новой игры(обучение + выбор размера карты)
     frame:
-        xalign 0.35  # По центру по X
+        xalign 0.4  # По центру по X
         yanchor 1.0  # Привязка к нижнему краю
         ypos 0.95     # В самом низу
         textbutton "Новая игра":
@@ -553,18 +487,12 @@ screen game_screen():
     # Таймер для обновления игры (вызывается каждые 0.1 секунды)
     timer 0.1 repeat True action Function(game_update)
 
-# # Основная сцена игры (Без обучения)
-# label start:
-#     $ game_state = init_game()  # Инициализируем состояние игры
-#     show screen game_screen    # Показываем игровой экран
-#
-#     # Бесконечный цикл (игра управляется через экран и обработчики)
-#     while True:
-#         pause 1.0  # Пауза для предотвращения 100% загрузки CPU
-
 
 # Основная сцена игры
 label start:
+    # Всегда сбрасываем состояние игры
+    $ game_state = None
+
     if persistent.map_size not in MAP_SIZES:
         $ persistent.map_size = "medium"
 
@@ -574,17 +502,9 @@ label start:
     $ START_NUM_ENEMY = current_size["start_enemy"]
     $ START_NUM_COINS = current_size["start_coins"]
 
-#     # Устанавливаем размер карты из сохраненного значения
-#     $ MAP_WIDTH = MAP_SIZES[persistent.map_size]["width"]
-#     $ MAP_HEIGHT = MAP_SIZES[persistent.map_size]["height"]
-#
-#     $ START_NUM_ENEMY = START_NUM_ENEMY[persistent.map_size]["start_enemy"]
-#     $ START_NUM_COINS = START_NUM_COINS[persistent.map_size]["start_coins"]
-
     # Показываем экран обучения перед началом игры
     call screen tutorial_screen
-
-    # Инициализируем состояние игры
+    # После закрытия обучения снова инициализируем игру
     $ game_state = init_game()
 
     # Показываем игровой экран
