@@ -279,7 +279,7 @@ init python:
     def handle_click(pos):
         # Если игра окончена, клик перезапускает игру
         if game_state["game_over"]:
-            restart_game()
+#             restart_game()
             return
 
         # Преобразуем координаты клика в клетку карты
@@ -298,17 +298,12 @@ init python:
 
         # Сначала очистим старую точку в карте маршрута
         game_state["map_path"][ty][tx] = CELL_EMPTY
-        print(game_state["target_pos"])
+#         print(game_state["target_pos"])
 
         # Теперь устанавливаем новую цель для движения
         game_state["target_pos"] = (tx, ty)
         game_state["map_path"][ty][tx] = CELL_PLAYER_TARGET
-        print(game_state["target_pos"])
-
-#         print(f"Конечная точка пути игрока. {game_state['map_path'][tx][ty]}")
-#         print(ty, tx)
-#         print(game_state["map_path"])
-#         print(game_state["map"])
+#         print(game_state["target_pos"])
 
         # Находим путь до цели
         game_state["path"] = find_path((px, py), (tx, ty), game_state)
@@ -324,7 +319,7 @@ init python:
     def handle_key(key):
         # Если игра окончена, любая клавиша перезапускает игру
         if game_state["game_over"]:
-            restart_game()
+#             restart_game()
             return
 
         px, py = game_state["player_pos"]  # Текущая позиция игрока
@@ -386,7 +381,8 @@ init python:
             game_state["game_over"] = True
             game_state["message"] = "Поражение! Кликните для рестарта"
             game_state["path"] = []  # Очищаем путь
-            return False
+            renpy.show_screen("lose_screen")
+#             return False
 
         # Перемещаем игрока
         game_state["map"][py][px] = CELL_EMPTY  # Освобождаем старую клетку
@@ -433,6 +429,7 @@ init python:
             if game_state["map"][ny][nx] == CELL_PLAYER:
                 game_state["game_over"] = True
                 game_state["message"] = "Враг догнал вас!"
+                renpy.show_screen("lose_screen")
 
             # Перемещаем врага
             game_state["map"][y][x] = CELL_EMPTY  # Освобождаем старую позицию
@@ -449,6 +446,7 @@ init python:
     def game_update():
         # Проверка на количество монет. TODO делать в начале или в конце функции?
         if len(game_state['coins']) <= 0:  # Если монеток не осталось
+            game_state["game_over"] = True
             renpy.show_screen("victory_screen")
 
         # Если игра окончена - ничего не обновляем
@@ -544,13 +542,13 @@ screen game_screen():
         textbutton "Рестарт":
             action Function(restart_game)  # При клике перезапускаем игру
 
-#     # Кнопка начала новой игры(обучение + выбор размера карты)
-#     frame:
-#         xalign 0.5  # По центру по X
-#         yanchor 1.0  # Привязка к нижнему краю
-#         ypos 0.95     # В самом низу
-#         textbutton "Рестарт":
-#             action Function(restart_game)  # При клике перезапускаем игру
+    # Кнопка начала новой игры(обучение + выбор размера карты)
+    frame:
+        xalign 0.35  # По центру по X
+        yanchor 1.0  # Привязка к нижнему краю
+        ypos 0.95     # В самом низу
+        textbutton "Новая игра":
+            action Function(new_game)  # При клике перезапускаем игру
 
     # Таймер для обновления игры (вызывается каждые 0.1 секунды)
     timer 0.1 repeat True action Function(game_update)
