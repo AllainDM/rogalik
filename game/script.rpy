@@ -1,36 +1,150 @@
 ﻿# Инициализация Python-блока в RenPy
+# init python:
+#     # Импорт необходимых модулей
+#     import random  # Для генерации случайных чисел
+#     import math    # Для математических операций (хотя в текущем коде не используется)
+#
+#     # Конфигурация игры
+# #     MAP_WIDTH = 10   # Ширина игрового поля в клетках
+#     MAP_WIDTH = 32   # Ширина игрового поля в клетках
+# #     MAP_HEIGHT = 15  # Высота игрового поля в клетках
+#     MAP_HEIGHT = 17  # Высота игрового поля в клетках
+#     CELL_SIZE = 60   # Размер одной клетки в пикселях
+#     MOVE_INTERVAL = 0.5  # Интервал между движениями игрока/врагов в секундах
+#
+#     # Типы клеток на карте (используются для отрисовки и логики игры)
+#     CELL_EMPTY = 0   # Пустая клетка
+#     CELL_WALL = 1    # Стена (непроходимая)
+#     CELL_PLAYER = 2  # Игрок
+#     CELL_COIN = 3    # Монета (цель для сбора)
+#     CELL_ENEMY = 4   # Враг (опасность)
+#
+#     CELL_PLAYER_TARGET = 5  # Конечная точка маршрута игрока, выводится специальный спрайт
+#
+#     # Стартовые параметры
+#     START_NUM_COINS = 30
+#     START_NUM_ENEMY = 3
+#
+#     # Функция инициализации игрового состояния
+#     def init_game():
+#         # Создаем пустую карту (двумерный список)
+#         game_map = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
+#
+#         # Создаем пустую карту (двумерный список) для отрисовки пути поверх обычной карты
+#         game_map_path = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
+#
+#         # Создаем границы карты (стены по краям)
+#         for x in range(MAP_WIDTH):
+#             game_map[0][x] = CELL_WALL  # Верхняя стена
+#             game_map[MAP_HEIGHT-1][x] = CELL_WALL  # Нижняя стена
+#         for y in range(MAP_HEIGHT):
+#             game_map[y][0] = CELL_WALL  # Левая стена
+#             game_map[y][MAP_WIDTH-1] = CELL_WALL  # Правая стена
+#
+#         # Размещаем игрока в центре карты
+#         player_pos = [MAP_WIDTH // 2, MAP_HEIGHT // 2]
+#         game_map[player_pos[1]][player_pos[0]] = CELL_PLAYER
+#
+#         # Генерируем монеты (10 штук в случайных местах)
+#         coins = []
+#         for _ in range(START_NUM_COINS):
+#             # Генерируем случайные координаты
+#             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
+#             # Убеждаемся, что клетка пуста
+#             while game_map[y][x] != CELL_EMPTY:
+#                 x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
+#             # Размещаем монету
+#             game_map[y][x] = CELL_COIN
+#             coins.append((x, y))  # Добавляем в список монет
+#
+#         # Генерируем врагов (3 штуки в случайных местах)
+#         enemies = []
+#         for _ in range(START_NUM_ENEMY):
+#             # Генерируем случайные координаты
+#             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
+#             # Убеждаемся, что клетка пуста
+#             while game_map[y][x] != CELL_EMPTY:
+#                 x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
+#             # Размещаем врага и задаем начальное направление движения
+#             game_map[y][x] = CELL_ENEMY
+#             enemies.append([x, y, random.choice([(0,1), (1,0), (0,-1), (-1,0)])])
+#
+#         # Возвращаем начальное состояние игры в виде словаря
+#         return {
+#             "map": game_map,          # Двумерный массив карты
+#             "map_path": game_map_path, # Двумерный массив карты для отобажения пути игрока
+#             "player_pos": player_pos, # Позиция игрока [x, y]
+#             "coins": coins,          # Список позиций монет [(x1,y1), ...]
+#             "enemies": enemies,       # Список врагов [[x,y, (dx,dy)], ...]
+#             "score": 0,               # Счет игрока
+#             "game_over": False,       # Флаг окончания игры
+#             "message": "Кликните куда идти",  # Сообщение для игрока
+#             "target_pos": None,       # Целевая позиция для движения
+#             "path": [],              # Путь до цели (список клеток)
+#             "last_move_time": 0.0,    # Время последнего движения игрока
+#             "enemy_move_time": 0.0   # Время последнего движения врагов
+#         }
+# Инициализация Python-блока в RenPy
 init python:
     # Импорт необходимых модулей
     import random  # Для генерации случайных чисел
-    import math    # Для математических операций (хотя в текущем коде не используется)
+    import math    # Для математических операций
 
     # Конфигурация игры
-#     MAP_WIDTH = 10   # Ширина игрового поля в клетках
-    MAP_WIDTH = 32   # Ширина игрового поля в клетках
-#     MAP_HEIGHT = 15  # Высота игрового поля в клетках
-    MAP_HEIGHT = 17  # Высота игрового поля в клетках
+#     MAP_WIDTH = 32   # Ширина игрового поля в клетках
+#     MAP_HEIGHT = 17  # Высота игрового поля в клетках
+    MAP_WIDTH = 10   # Ширина игрового поля в клетках
+    MAP_HEIGHT = 10  # Высота игрового поля в клетках
     CELL_SIZE = 60   # Размер одной клетки в пикселях
     MOVE_INTERVAL = 0.5  # Интервал между движениями игрока/врагов в секундах
 
-    # Типы клеток на карте (используются для отрисовки и логики игры)
+    # Типы клеток на карте
     CELL_EMPTY = 0   # Пустая клетка
     CELL_WALL = 1    # Стена (непроходимая)
     CELL_PLAYER = 2  # Игрок
     CELL_COIN = 3    # Монета (цель для сбора)
     CELL_ENEMY = 4   # Враг (опасность)
-
-    CELL_PLAYER_TARGET = 5  # Конечная точка маршрута игрока, выводится специальный спрайт
+    CELL_PLAYER_TARGET = 5  # Конечная точка маршрута игрока
 
     # Стартовые параметры
-    START_NUM_COINS = 30
-    START_NUM_ENEMY = 3
+    START_NUM_COINS = 1
+    START_NUM_ENEMY = 0
+    WALL_DENSITY = 0.2  # Плотность стен (0-1), регулирует сколько стен будет сгенерировано
+
+    # Функция для генерации случайных стен на карте
+    def generate_random_walls(game_map):
+        """Генерирует случайные стены на карте, избегая границ и оставляя проходы.
+
+        Args:
+            game_map (list): Двумерный массив, представляющий игровую карту
+        """
+        # Проходим по всем клеткам карты, кроме границ
+        for y in range(1, MAP_HEIGHT-1):
+            for x in range(1, MAP_WIDTH-1):
+                # Случайно решаем, будет ли здесь стена (с учетом плотности)
+                if random.random() < WALL_DENSITY:
+                    # Проверяем, что клетка пуста (не содержит игрока, монет и т.д.)
+                    if game_map[y][x] == CELL_EMPTY:
+                        game_map[y][x] = CELL_WALL
+
+        # Гарантируем, что у игрока есть хотя бы один проход в каждом направлении
+        center_x, center_y = MAP_WIDTH // 2, MAP_HEIGHT // 2
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Вверх, вправо, вниз, влево
+
+        for dx, dy in directions:
+            # Проверяем клетки в каждом направлении от центра
+            for i in range(1, 3):  # Проверяем 2 клетки в каждом направлении
+                x, y = center_x + dx*i, center_y + dy*i
+                if 0 <= x < MAP_WIDTH and 0 <= y < MAP_HEIGHT:
+                    if game_map[y][x] == CELL_WALL:
+                        game_map[y][x] = CELL_EMPTY  # Удаляем стену, если она есть
 
     # Функция инициализации игрового состояния
     def init_game():
         # Создаем пустую карту (двумерный список)
         game_map = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
 
-        # Создаем пустую карту (двумерный список) для отрисовки пути поверх обычной карты
+        # Создаем пустую карту для отрисовки пути
         game_map_path = [[CELL_EMPTY for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
 
         # Создаем границы карты (стены по краям)
@@ -41,46 +155,56 @@ init python:
             game_map[y][0] = CELL_WALL  # Левая стена
             game_map[y][MAP_WIDTH-1] = CELL_WALL  # Правая стена
 
+        # Генерируем случайные стены внутри уровня
+        generate_random_walls(game_map)
+
         # Размещаем игрока в центре карты
         player_pos = [MAP_WIDTH // 2, MAP_HEIGHT // 2]
+        # Убеждаемся, что стартовая позиция игрока не в стене
+        while game_map[player_pos[1]][player_pos[0]] != CELL_EMPTY:
+            # Если центр занят, ищем ближайшую свободную клетку
+            for y in range(player_pos[1]-1, player_pos[1]+2):
+                for x in range(player_pos[0]-1, player_pos[0]+2):
+                    if game_map[y][x] == CELL_EMPTY:
+                        player_pos = [x, y]
+                        break
+                else:
+                    continue
+                break
         game_map[player_pos[1]][player_pos[0]] = CELL_PLAYER
 
-        # Генерируем монеты (10 штук в случайных местах)
+        # Генерируем монеты (в случайных местах)
         coins = []
         for _ in range(START_NUM_COINS):
-            # Генерируем случайные координаты
             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
-            # Убеждаемся, что клетка пуста
+            # Убеждаемся, что клетка пуста и не является стеной
             while game_map[y][x] != CELL_EMPTY:
                 x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
-            # Размещаем монету
             game_map[y][x] = CELL_COIN
-            coins.append((x, y))  # Добавляем в список монет
+            coins.append((x, y))
 
-        # Генерируем врагов (3 штуки в случайных местах)
+        # Генерируем врагов (в случайных местах)
         enemies = []
         for _ in range(START_NUM_ENEMY):
-            # Генерируем случайные координаты
             x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
-            # Убеждаемся, что клетка пуста
+            # Убеждаемся, что клетка пуста и не является стеной
             while game_map[y][x] != CELL_EMPTY:
                 x, y = random.randint(1, MAP_WIDTH-2), random.randint(1, MAP_HEIGHT-2)
-            # Размещаем врага и задаем начальное направление движения
             game_map[y][x] = CELL_ENEMY
             enemies.append([x, y, random.choice([(0,1), (1,0), (0,-1), (-1,0)])])
 
-        # Возвращаем начальное состояние игры в виде словаря
+        # Возвращаем начальное состояние игры
         return {
             "map": game_map,          # Двумерный массив карты
-            "map_path": game_map_path, # Двумерный массив карты для отобажения пути игрока
+            "map_path": game_map_path, # Карта для отображения пути
             "player_pos": player_pos, # Позиция игрока [x, y]
-            "coins": coins,          # Список позиций монет [(x1,y1), ...]
-            "enemies": enemies,       # Список врагов [[x,y, (dx,dy)], ...]
+            "coins": coins,          # Список позиций монет
+            "enemies": enemies,       # Список врагов
             "score": 0,               # Счет игрока
             "game_over": False,       # Флаг окончания игры
-            "message": "Кликните куда идти",  # Сообщение для игрока
-            "target_pos": None,       # Целевая позиция для движения
-            "path": [],              # Путь до цели (список клеток)
+            "message": "Кликните куда идти",  # Сообщение
+            "target_pos": None,       # Целевая позиция
+            "path": [],              # Путь до цели
             "last_move_time": 0.0,    # Время последнего движения игрока
             "enemy_move_time": 0.0   # Время последнего движения врагов
         }
@@ -297,6 +421,10 @@ init python:
 
     # Функция обновления игрового состояния
     def game_update():
+        # Проверка на количество монет. TODO делать в начале или в конце функции?
+        if len(game_state['coins']) <= 0:  # Если монеток не осталось
+            renpy.show_screen("victory_screen")
+
         # Если игра окончена - ничего не обновляем
         if game_state["game_over"]:
             return
@@ -333,26 +461,6 @@ screen game_screen():
     key "a" action Function(handle_key, "a")  # Клавиша A
     key "s" action Function(handle_key, "s")  # Клавиша S
     key "d" action Function(handle_key, "d")  # Клавиша D
-#
-#     # Обработчики нажатия клавиш (keydown)
-#     key "K_UP" action Function(handle_key_down, "K_UP")
-#     key "K_DOWN" action Function(handle_key_down, "K_DOWN")
-#     key "K_LEFT" action Function(handle_key_down, "K_LEFT")
-#     key "K_RIGHT" action Function(handle_key_down, "K_RIGHT")
-#     key "w" action Function(handle_key_down, "w")
-#     key "a" action Function(handle_key_down, "a")
-#     key "s" action Function(handle_key_down, "s")
-#     key "d" action Function(handle_key_down, "d")
-#
-#     # Обработчики отпускания клавиш
-#     key "UP up" action Function(handle_key_up, "K_UP")
-#     key "DOWN up" action Function(handle_key_up, "K_DOWN")
-#     key "LEFT up" action Function(handle_key_up, "K_LEFT")
-#     key "RIGHT up" action Function(handle_key_up, "K_RIGHT")
-#     key "w up" action Function(handle_key_up, "w")
-#     key "a up" action Function(handle_key_up, "a")
-#     key "s up" action Function(handle_key_up, "s")
-#     key "d up" action Function(handle_key_up, "d")
 
     # Создаем сетку клеток (игровое поле)
     grid MAP_WIDTH MAP_HEIGHT:
@@ -381,33 +489,52 @@ screen game_screen():
 #                     if cell_path == CELL_PLAYER_TARGET:
 #                         add "wall.jpg"
 
-    # Вертикальный контейнер для интерфейса
-    vbox:
+    # Контейнер для интерфейса. vbox - вертикальный, hbox - горизонтальный.
+    hbox:
         xalign 0.5  # Выравнивание по центру по X
         ypos 20    # Позиция по Y
-        text "Roguelike с путём" size 30 xalign 0.5  # Заголовок
-        text "Счёт: [game_state['score']]" size 24 xalign 0.5  # Отображение счета
-        text "[game_state['message']]" size 20 xalign 0.5  # Сообщение игроку
+        spacing 20  # Расстояние между элементами внутри hbox
+        text "Roguelike на RenPy." size 30 xalign 0.1 # color # "#000000" # Заголовок
+        text "Счёт: [game_state['score']]" size 30 xalign 1  # Отображение счета
+
+        # Скроем вывод пути, пока не решили вопрос построения пути с учетом стен
+#         text "[game_state['message']]" size 20 xalign 0.5  # Сообщение игроку
         # Если есть цель - показываем ее координаты
-        if game_state["target_pos"]:
-            $ tx, ty = game_state["target_pos"]
-            text f"Цель: ({tx}, {ty})" size 16 xalign 0.5
+#         if game_state["target_pos"]:
+#             $ tx, ty = game_state["target_pos"]
+#             text f"Цель: ({tx}, {ty})" size 16 xalign 0.5
 
     # Кнопка рестарта
     frame:
         xalign 0.5  # По центру по X
         yanchor 1.0  # Привязка к нижнему краю
-        ypos 1.0     # В самом низу
+        ypos 0.95     # В самом низу
         textbutton "Рестарт":
             action Function(restart_game)  # При клике перезапускаем игру
 
     # Таймер для обновления игры (вызывается каждые 0.1 секунды)
     timer 0.1 repeat True action Function(game_update)
 
+# # Основная сцена игры (Без обучения)
+# label start:
+#     $ game_state = init_game()  # Инициализируем состояние игры
+#     show screen game_screen    # Показываем игровой экран
+#
+#     # Бесконечный цикл (игра управляется через экран и обработчики)
+#     while True:
+#         pause 1.0  # Пауза для предотвращения 100% загрузки CPU
+
+
 # Основная сцена игры
 label start:
-    $ game_state = init_game()  # Инициализируем состояние игры
-    show screen game_screen    # Показываем игровой экран
+    # Показываем экран обучения перед началом игры
+    call screen tutorial_screen
+
+    # Инициализируем состояние игры
+    $ game_state = init_game()
+
+    # Показываем игровой экран
+    show screen game_screen
 
     # Бесконечный цикл (игра управляется через экран и обработчики)
     while True:
